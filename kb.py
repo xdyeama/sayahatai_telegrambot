@@ -35,11 +35,7 @@ cities_choice = [
         InlineKeyboardButton(text="🌞 Shymkent", callback_data="Shymkent"),
         InlineKeyboardButton(text="🕌 Turkestan", callback_data="Turkestan"),
     ],
-    [
-        InlineKeyboardButton(
-              text="To next question", callback_data="next_state"
-        )
-    ]
+    [InlineKeyboardButton(text="NEXT", callback_data="next_question")],
 ]
 
 cities_kb = InlineKeyboardMarkup(inline_keyboard=cities_choice)
@@ -68,5 +64,11 @@ travel_style_choice = [
     [InlineKeyboardButton(text="🌉Tourist sightseeing", callback_data="attraction")],
     [InlineKeyboardButton(text="🖼️Cultural and spiritual", callback_data="cultural")],
     [InlineKeyboardButton(text="🍲Foodie tour", callback_data="food")],
+    [InlineKeyboardButton(text="Generate plan", callback_data="generate_text")],
 ]
 travel_style_kb = InlineKeyboardMarkup(inline_keyboard=travel_style_choice)
+
+final_kb_button = [
+    [InlineKeyboardButton(text="Generate plan", callback_data="generate_text")],
+]
+final_kb = InlineKeyboardMarkup(inline_keyboard=final_kb_button)

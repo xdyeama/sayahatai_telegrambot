@@ -10,7 +10,6 @@ from handlers import router
 
 
 async def main() -> None:
-
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
     bot = Bot(config.BOT_TOKEN, parse_mode=ParseMode.HTML)
     # Dispatcher is a root router

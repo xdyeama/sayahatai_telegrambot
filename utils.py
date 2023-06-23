@@ -10,7 +10,7 @@ async def generate_text(prompt) -> dict:
         response = await openai.ChatCompletion.acreate(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            temperature=1.3,
+            temperature=0.7,
         )
         return (
             response["choices"][0]["message"]["content"],

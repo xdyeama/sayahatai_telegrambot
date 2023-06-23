@@ -17,7 +17,6 @@ async def add_user(user_id):
         "balance": 0,
         "prev_request": "",
         "prev_response": "",
-        "tables": [],
     }
     collection.insert_one(payload)
 
@@ -30,7 +29,10 @@ async def get_request_response(user_id):
 async def update_request_response(user_id, new_request, new_response):
     collection.update_one(
         filter={"_id": user_id},
-        update={"$set": {"prev_request": new_request, "prev_response": new_response}},
+        update={
+            "$set": {"prev_request": new_request, 
+                     "prev_response": new_response}
+        },
     )
 
 
