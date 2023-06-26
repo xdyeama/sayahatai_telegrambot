@@ -60,11 +60,20 @@ days_choice = [
 days_kb = InlineKeyboardMarkup(inline_keyboard=days_choice)
 
 travel_style_choice = [
-    [InlineKeyboardButton(text="🏄‍♂️Active tourism", callback_data="active")],
-    [InlineKeyboardButton(text="🌉Tourist sightseeing", callback_data="attraction")],
-    [InlineKeyboardButton(text="🖼️Cultural and spiritual", callback_data="cultural")],
+    [InlineKeyboardButton(text="🏄‍♂️Active tourism", callback_data="active leisure")],
+    [
+        InlineKeyboardButton(
+            text="🌉Tourist sightseeing", callback_data="tourist attractions"
+        )
+    ],
+    [
+        InlineKeyboardButton(
+            text="🖼️Cultural and spiritual",
+            callback_data="cultural and spiritual enrichment",
+        )
+    ],
     [InlineKeyboardButton(text="🍲Foodie tour", callback_data="food")],
-    [InlineKeyboardButton(text="Generate plan", callback_data="generate_text")],
+    [InlineKeyboardButton(text="Finish plan config", callback_data="finish_plan_config")],
 ]
 travel_style_kb = InlineKeyboardMarkup(inline_keyboard=travel_style_choice)
 

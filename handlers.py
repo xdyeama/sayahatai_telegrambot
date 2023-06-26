@@ -17,7 +17,7 @@ import db
 
 global_cities_choice = []
 global_num_days_choice: int = 0
-global_travel_style_choice: str = ""
+global_travel_style_choice = []
 
 
 router = Router()
@@ -35,6 +35,8 @@ async def command_start_handler(message: Message) -> None:
 @router.message(F.text == "◀️ Back to menu")
 @router.message(F.text == "◀️ Go to menu")
 async def menu(msg: Message):
+    global global_cities_choice
+    global_cities_choice = []
     await msg.answer(texts.menu, reply_markup=kb.menu)
 
 
@@ -68,12 +70,14 @@ async def handle_make_trip_command(cb: CallbackQuery, state: FSMContext) -> None
 @router.callback_query(ChoiceStateGroup.cities_choice_state)
 async def handle_cities_choice_state(cb: CallbackQuery, state: FSMContext) -> None:
     global global_cities_choice
-    global_cities_choice.append(cb.data)
-    print(global_cities_choice)
-    await state.set_state(ChoiceStateGroup.num_days_choice_state)
-    curr_state = await state.get_state()
-    print(curr_state)
-    await cb.message.answer(texts.num_days_input_text, reply_markup=kb.days_kb)
+    if cb.data != "next_question":
+        global_cities_choice.append(cb.data)
+        print(global_cities_choice)
+    else:
+        await state.set_state(ChoiceStateGroup.num_days_choice_state)
+        curr_state = await state.get_state()
+        print(curr_state)
+        await cb.message.answer(texts.num_days_input_text, reply_markup=kb.days_kb)
 
 
 @router.callback_query(ChoiceStateGroup.num_days_choice_state)
@@ -94,31 +98,38 @@ async def handle_travel_style_choice_state(
     cb: CallbackQuery, state: FSMContext
 ) -> None:
     global global_travel_style_choice
-    global_travel_style_choice = cb.data
-    print(global_travel_style_choice)
-    curr_state = await state.get_state()
-    print(curr_state)
-    await state.set_state(GenStateGroup.generate_trip_state)
-    await cb.message.answer("Do you want to generate a trip?", reply_markup=kb.final_kb)
+    if cb.data != "finish_plan_config":
+        global_travel_style_choice.append(cb.data)
+        print(global_travel_style_choice)
+    else:
+        curr_state = await state.get_state()
+        print(curr_state)
+        await state.set_state(GenStateGroup.generate_trip_state)
+        await cb.message.answer(
+            "Do you want to generate a trip?", reply_markup=kb.final_kb
+        )
 
 
 @router.callback_query(F.data == "generate_text")
 @router.callback_query(GenStateGroup.generate_trip_state)
+@flags.chat_action("typing")
 async def handle_final_state(cb: CallbackQuery, state: FSMContext) -> None:
     check = await db.check_balance(cb.from_user.id)
     if not check:
         return await cb.message.answer(texts.balance_error, reply_markup=kb.iexit_kb)
     context = await db.get_request_response(cb.from_user.id)
     cities_inp = ", ".join(global_cities_choice)
+    travel_style_inp = ", ".join(global_travel_style_choice)
     message = texts.main_prompt.format(
         cities=cities_inp,
         num_days=global_num_days_choice,
-        travel_style=global_travel_style_choice,
+        travel_style=travel_style_inp,
     )
     print(message)
     prompt = texts.prompt_template.format(
         prev_request=context[0], prev_response=context[1], message=message
     )
+    print(prompt)
     res = await utils.generate_text(prompt)
     if not res:
         return await cb.message.answer(texts.gen_error, reply_markup=kb.iexit_kb)
